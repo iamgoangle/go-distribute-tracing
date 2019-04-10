@@ -43,4 +43,16 @@ func HelloSarah(ctx context.Context) {
 		log.String("event", "HelloSarah"),
 		log.String("value", "Sarah Ocha"),
 	)
+
+	HelloChildOfSarah(span)
+}
+
+func HelloChildOfSarah(parentSpan opentracing.Span) {
+	span := opentracing.StartSpan("HelloChildOfSarah", opentracing.ChildOf(parentSpan.Context()))
+	defer span.Finish()
+
+	span.LogFields(
+		log.String("event", "HelloChildOfSarah"),
+		log.String("value", "Prayud Jonochey"),
+	)
 }
