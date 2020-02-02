@@ -2,57 +2,52 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"time"
+
+	"github.com/opentracing/opentracing-go"
 
 	"github.com/iamgoangle/go-http-tracing-kafka/internal/tracing"
-	"github.com/opentracing/opentracing-go"
-	"github.com/opentracing/opentracing-go/log"
 )
 
 func main() {
-	tracer, closer := tracing.Init("my-hello-world")
+	tracer, closer := tracing.Init("tracer-context")
 	defer closer.Close()
 
-	// GlobalTracer returns the global singleton `Tracer` implementation
 	opentracing.SetGlobalTracer(tracer)
 
-	// Create span
-	span := tracer.StartSpan("say-my-name")
-	span.SetTag("value", "ShaZam")
+	span := tracer.StartSpan("main program")
+	span.SetTag("channelID", 112)
 	defer span.Finish()
 
 	ctx := opentracing.ContextWithSpan(context.Background(), span)
-	HelloJohn(ctx)
-	HelloSarah(ctx)
+
+	OnEventStart(ctx, "John")
+	OnProcessor(ctx)
+	OnComplete(ctx)
 }
 
-func HelloJohn(ctx context.Context) {
-	span, _ := opentracing.StartSpanFromContext(ctx, "HelloJohn")
+func OnEventStart(ctx context.Context, name string) {
+	fmt.Println("call OnEventStart")
+	span, _ := opentracing.StartSpanFromContext(ctx, "OnEventStart")
 	defer span.Finish()
 
-	span.LogFields(
-		log.String("event", "HelloJohn"),
-		log.String("value", "John Ocha"),
-	)
+	time.Sleep(1 * time.Second)
 }
 
-func HelloSarah(ctx context.Context) {
-	span, _ := opentracing.StartSpanFromContext(ctx, "HelloSarah")
+func OnProcessor(ctx context.Context) {
+	fmt.Println("call OnProcessor")
+	span, _ := opentracing.StartSpanFromContext(ctx, "OnProcessor")
 	defer span.Finish()
 
-	span.LogFields(
-		log.String("event", "HelloSarah"),
-		log.String("value", "Sarah Ocha"),
-	)
-
-	HelloChildOfSarah(span)
+	time.Sleep(10 * time.Second)
 }
 
-func HelloChildOfSarah(parentSpan opentracing.Span) {
-	span := opentracing.StartSpan("HelloChildOfSarah", opentracing.ChildOf(parentSpan.Context()))
+func OnComplete(ctx context.Context) {
+	fmt.Println("call OnComplete")
+
+	span, _ := opentracing.StartSpanFromContext(ctx, "OnComplete")
 	defer span.Finish()
 
-	span.LogFields(
-		log.String("event", "HelloChildOfSarah"),
-		log.String("value", "Prayud Jonochey"),
-	)
+	time.Sleep(10 * time.Second)
 }
