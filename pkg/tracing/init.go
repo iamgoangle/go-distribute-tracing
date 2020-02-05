@@ -20,7 +20,11 @@ func Init(service string) (opentracing.Tracer, io.Closer) {
 			LogSpans: true,
 		},
 	}
-	tracer, closer, err := cfg.New(service, config.Logger(jaeger.StdLogger))
+
+	logger := config.Logger(jaeger.StdLogger)
+	maxTag := config.MaxTagValueLength(10)
+
+	tracer, closer, err := cfg.New(service, logger, maxTag)
 	if err != nil {
 		panic(fmt.Sprintf("ERROR: cannot init Jaeger: %v\n", err))
 	}

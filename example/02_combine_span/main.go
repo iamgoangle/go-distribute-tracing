@@ -7,7 +7,7 @@ import (
 
 	"github.com/opentracing/opentracing-go"
 
-	"github.com/iamgoangle/go-http-tracing-kafka/internal/tracing"
+	"github.com/iamgoangle/go-http-tracing-kafka/pkg/tracing"
 )
 
 func main() {
@@ -18,6 +18,7 @@ func main() {
 
 	span := tracer.StartSpan("main program")
 	span.SetTag("channelID", 112)
+	span.SetTag("campaignName", "Golf Ja")
 	defer span.Finish()
 
 	ctx := opentracing.ContextWithSpan(context.Background(), span)

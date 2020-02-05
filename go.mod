@@ -4,6 +4,8 @@ go 1.12
 
 require (
 	github.com/codahale/hdrhistogram v0.0.0-20161010025455-3a0bb77429bd // indirect
+	github.com/mailru/easyjson v0.7.0 // indirect
+	github.com/olivere/elastic v6.2.27+incompatible
 	github.com/opentracing/opentracing-go v1.1.0
 	github.com/pkg/errors v0.8.1 // indirect
 	github.com/stretchr/testify v1.3.0 // indirect
